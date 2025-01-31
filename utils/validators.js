@@ -38,3 +38,40 @@ export const validateDescription = ( description ) => {
 
     return description.trim();
 };
+
+export const validateCategory = ( category, categories ) => {
+    if ( !category ) return null;
+
+    const normalizedCategory = category.trim().toLowerCase();
+    const validCategory = categories.find( c => c.toLowerCase() === normalizedCategory );
+
+    if ( !validCategory ) {
+        throw new Error(
+            `Invalid category: "${ category }"\nAvailable categories: ${ categories.join( ', ' ) }`
+        );
+    }
+
+    return validCategory;
+};
+
+export const validateExpenses = ( expenses ) => {
+    if ( !Array.isArray( expenses ) ) {
+        throw new Error( 'Invalid expenses data structure' );
+    }
+
+    expenses.forEach( ( expense, index ) => {
+        if ( !expense.id || !expense.description || !expense.amount || !expense.category || !expense.createdAt ) {
+            throw new Error( `Invalid expense data at index ${ index }` );
+        }
+
+        if ( typeof expense.amount !== 'number' || !isFinite( expense.amount ) ) {
+            throw new Error( `Invalid amount for expense ID ${ expense.id }` );
+        }
+
+        if ( new Date( expense.createdAt ).toString() === 'Invalid Date' ) {
+            throw new Error( `Invalid date for expense ID ${ expense.id }` );
+        }
+    } );
+
+    return expenses;
+};

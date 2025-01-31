@@ -45,8 +45,8 @@ async function readExpenses () {
     }
 }
 
-async function saveExpense ( expense ) {
-    await fs.writeFile( dbPath, JSON.stringify( { expense }, null, 2 ), 'utf8' );
+async function saveExpense ( expenses ) {
+    await fs.writeFile( dbPath, JSON.stringify( { expenses }, null, 2 ), 'utf8' );
 }
 
 export const safeReadExpenses = async () => {
@@ -57,9 +57,9 @@ export const safeReadExpenses = async () => {
     }
 };
 
-export const safeSaveExpense = async ( expense ) => {
+export const safeSaveExpense = async ( expenses ) => {
     try {
-        await saveExpense( expense );
+        await saveExpense( expenses );
     } catch ( error ) {
         throw new Error( `Failed to save expense: ${ error.message }` );
     }
