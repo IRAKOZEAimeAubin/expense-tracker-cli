@@ -2,6 +2,8 @@
 
 import { Command } from "commander";
 import addExpense from "./commands/addExpense.js";
+import listExpenses from "./commands/listExpenses.js";
+import chalkColors from "./utils/chalkColors.js";
 
 const program = new Command();
 
@@ -21,6 +23,19 @@ program
             addExpense( description, amount );
         } catch ( error ) {
             console.error( chalkColors.error( 'Command failed:' ), error.message );
+            process.exit( 1 );
+        }
+    } );
+
+program
+    .command( 'list' )
+    .description( 'List expenses' )
+    .argument( '[category]', 'Filter expenses by category' )
+    .action( async ( category ) => {
+        try {
+            await listExpenses( category );
+        } catch ( error ) {
+            console.error( chalkColors.error( '\nCommand failed:' ), error.message );
             process.exit( 1 );
         }
     } );
