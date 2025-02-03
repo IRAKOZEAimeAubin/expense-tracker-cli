@@ -1,3 +1,6 @@
+import inquirer from "inquirer";
+import { CATEGORIES } from "./categories.js";
+
 export const dateFormatter = () => {
     return new Intl.DateTimeFormat( 'en-CA', {
         year: 'numeric',
@@ -47,3 +50,34 @@ export const calculateTotal = ( expenses ) => {
         throw new Error( `Failed to calculate total: ${ error.message }` );
     }
 };
+
+export async function prepareUpdatePrompts ( existingExpense ) {
+    return inquirer.prompt( [
+        {
+            type: 'number',
+            name: 'amount',
+            message: 'Enter new amount:',
+            default: existingExpense.amount,
+            validate: value => value > 0 || 'Amount must be positive'
+        },
+        {
+            type: 'list',
+            name: 'category',
+            message: 'Select the expense category:\n',
+            choices: CATEGORIES,
+            default: existingExpense.category
+        },
+        {
+            type: 'input',
+            name: 'description',
+            message: 'Enter new description:',
+            default: existingExpense.description,
+        },
+        {
+            type: 'confirm',
+            name: 'confirmUpdate',
+            message: 'Are you sure you want to update this expense?',
+            default: true
+        }
+    ] );
+}
