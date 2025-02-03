@@ -75,3 +75,13 @@ export const validateExpenses = ( expenses ) => {
 
     return expenses;
 };
+
+export const validateId = ( id ) => {
+    if ( !id ) throw new Error( 'Expense ID is required' );
+
+    const expenseId = Number( id );
+
+    if ( isNaN( expenseId ) || expenseId < 1 ) throw new Error( 'Invalid expense ID. Must be a positive number.' );
+
+    return expenseId;
+};
