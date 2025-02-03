@@ -4,6 +4,7 @@ import { Command } from "commander";
 import addExpense from "./commands/addExpense.js";
 import listExpenses from "./commands/listExpenses.js";
 import chalkColors from "./utils/chalkColors.js";
+import deleteExpense from "./commands/deleteExpense.js";
 
 const program = new Command();
 
@@ -39,6 +40,20 @@ program
             process.exit( 1 );
         }
     } );
+
+program
+    .command( 'delete' )
+    .description( 'Delete an expense' )
+    .option( '-i, --id <id>', 'id of the expense' )
+    .action( ( options ) => {
+        try {
+            const { id } = options;
+            deleteExpense( id )
+        } catch (error) {
+            console.error( chalkColors.error( 'Command failed:' ), error.message );
+            process.exit( 1 );
+        }
+    })
 
 program
     .on( 'command:*', () => {

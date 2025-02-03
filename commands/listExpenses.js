@@ -44,7 +44,7 @@ export default async function listExpenses ( category ) {
         console.log( '\n' + '-'.repeat( 80 ) );
         console.log(
             `Total: ${ formatAmount( total ) } ` +
-            `(${ filteredExpenses.length } expenses${ filteredExpenses.length <= 1 ? '' : 's' })`
+            `(${ filteredExpenses.length } expense${ filteredExpenses.length <= 1 ? '' : 's' })`
         );
 
         spinner.success( {
