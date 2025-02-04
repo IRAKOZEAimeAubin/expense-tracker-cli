@@ -6,6 +6,7 @@ import listExpenses from "./commands/listExpenses.js";
 import chalkColors from "./utils/chalkColors.js";
 import deleteExpense from "./commands/deleteExpense.js";
 import updateExpense from "./commands/updateExpense.js";
+import generateSummary from "./commands/generateSummary.js";
 
 const program = new Command();
 
@@ -19,10 +20,10 @@ program
     .description( 'Create a new expense' )
     .option( '-d, --description <description>', 'description of the expense', 'Miscellaneous' )
     .option( '-a, --amount <amount>', 'expense amount', '0' )
-    .action( ( options ) => {
+    .action( async ( options ) => {
         try {
             const { description, amount } = options;
-            addExpense( description, amount );
+            await addExpense( description, amount );
         } catch ( error ) {
             console.error( chalkColors.error( 'Command failed:' ), error.message );
             process.exit( 1 );
@@ -46,10 +47,25 @@ program
     .command( 'update' )
     .description( 'Update an expense' )
     .option( '-i, --id <id>', 'ID of the expense' )
-    .action( ( options ) => {
+    .action( async ( options ) => {
         try {
             const { id } = options;
-            updateExpense( id );
+            await updateExpense( id );
+        } catch ( error ) {
+            console.error( chalkColors.error( 'Command failed:' ), error.message );
+            process.exit( 1 );
+        }
+    } );
+
+program
+    .command( 'summary' )
+    .description( 'Generate expense summary' )
+    .option( '-m, --month <month>', 'Generate summary for a specific month' )
+    .action( async ( options ) => {
+        try {
+            const { month } = options;
+            const numericalMonth = month ? Number( month ) : undefined;
+            await generateSummary( numericalMonth );
         } catch ( error ) {
             console.error( chalkColors.error( 'Command failed:' ), error.message );
             process.exit( 1 );
@@ -60,10 +76,10 @@ program
     .command( 'delete' )
     .description( 'Delete an expense' )
     .option( '-i, --id <id>', 'ID of the expense' )
-    .action( ( options ) => {
+    .action( async ( options ) => {
         try {
             const { id } = options;
-            deleteExpense( id );
+            await deleteExpense( id );
         } catch ( error ) {
             console.error( chalkColors.error( 'Command failed:' ), error.message );
             process.exit( 1 );
