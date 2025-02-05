@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 import { CATEGORIES } from "./categories.js";
+import chalkColors from "./chalkColors.js";
 
 export const dateFormatter = () => {
     return new Intl.DateTimeFormat( 'en-CA', {
@@ -80,4 +81,59 @@ export async function prepareUpdatePrompts ( existingExpense ) {
             default: true
         }
     ] );
+}
+
+export function filterExpensesByMonth ( expenses, month ) {
+    const numericalMonth = Number( month );
+
+    if ( isNaN( numericalMonth ) || numericalMonth < 1 || numericalMonth > 12 ) {
+        throw new Error( 'Invalid month. Please provide a number between 1 and 12.' );
+    }
+
+    return expenses.filter( expense => {
+        const expenseDate = new Date( expense.createdAt );
+        return expenseDate.getMonth() === numericalMonth - 1;
+    } );
+}
+
+export function calculateSummaryStatistics ( expenses ) {
+    if ( expenses.length === 0 ) {
+        return {
+            totalExpenses: 0,
+            averageExpense: 0,
+            expenseCount: 0,
+            categorySummary: {},
+        };
+    }
+
+    const totalExpenses = calculateTotal( expenses );
+
+    const categorySummary = expenses.reduce( ( summary, expense ) => {
+        summary[ expense.category ] = ( summary[ expense.category ] || 0 ) + expense.amount;
+        return summary;
+    }, {} );
+
+    return {
+        totalExpenses: Number( totalExpenses.toFixed( 2 ) ),
+        averageExpense: Number( ( totalExpenses / expenses.length ).toFixed( 2 ) ),
+        expenseCount: expenses.length,
+        categorySummary
+    };
+}
+
+export function displaySummary ( summary, month ) {
+    console.log( chalkColors.info(
+        month
+            ? `Expense Summary for Month ${ month } 📊:`
+            : 'Overall Expense Summary 📊:'
+    ) );
+
+    console.log( chalkColors.info( `Total Expenses: $${ summary.totalExpenses }` ) );
+    console.log( chalkColors.info( `Number of Expenses: ${ summary.expenseCount }` ) );
+    console.log( chalkColors.info( `Average Expense: $${ summary.averageExpense }` ) );
+
+    console.log( chalkColors.info( '\nCategory Breakdown:' ) );
+    Object.entries( summary.categorySummary ).forEach( ( [ category, amount ] ) => {
+        console.log( chalkColors.info( `\t${ category }: $${ amount.toFixed( 2 ) }` ) );
+    } );
 }
