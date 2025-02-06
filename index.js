@@ -7,6 +7,7 @@ import chalkColors from "./utils/chalkColors.js";
 import deleteExpense from "./commands/deleteExpense.js";
 import updateExpense from "./commands/updateExpense.js";
 import generateSummary from "./commands/generateSummary.js";
+import exportToCSV from "./commands/export.js";
 
 const program = new Command();
 
@@ -80,6 +81,18 @@ program
         try {
             const { id } = options;
             await deleteExpense( id );
+        } catch ( error ) {
+            console.error( chalkColors.error( 'Command failed:' ), error.message );
+            process.exit( 1 );
+        }
+    } );
+
+program
+    .command( 'export' )
+    .description( 'Export expenses to a CSV file' )
+    .action( async () => {
+        try {
+            await exportToCSV();
         } catch ( error ) {
             console.error( chalkColors.error( 'Command failed:' ), error.message );
             process.exit( 1 );
